@@ -1,45 +1,28 @@
 // Add imports above this line
-import { galleryItems } from './gallery-items';
-// Change code below this line
-const galleryList = document.querySelector('.gallery');
-
-function createGalleryItem({ preview, original, description }) {
-  const galleryItem = document.createElement('li');
-  galleryItem.classList.add('gallery__item');
-
-  const galleryLink = document.createElement('a');
-  galleryLink.classList.add('gallery__link');
-  galleryLink.href = original;
-
-  const galleryImage = document.createElement('img');
-  galleryImage.classList.add('gallery__image');
-  galleryImage.src = preview;
-  galleryImage.dataset.source = original;
-  galleryImage.alt = description;
-
-  galleryLink.appendChild(galleryImage);
-  galleryItem.appendChild(galleryLink);
-
-  return galleryItem;
+import { galleryItems } from './gallery-items.js';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+const galleryEl = document.querySelector('.gallery');
+function createGalleryItems(galleryItems) {
+  let galleryElements = galleryItems.map(item => {
+    let galleryItem = document.createElement('li');
+    galleryItem.classList.add('gallery__item');
+    let galleryLink = document.createElement('a');
+    galleryLink.classList.add('gallery__link');
+    galleryLink.href = item.original;
+    let galleryImg = document.createElement('img');
+    galleryImg.classList.add('gallery__image');
+    galleryImg.src = item.preview;
+    galleryImg.alt = item.description;
+    galleryLink.appendChild(galleryImg);
+    galleryItem.appendChild(galleryLink);
+    return galleryItem;
+  });
+  galleryEl.append(...galleryElements);
 }
-
-const galleryElements = galleryItems.map(createGalleryItem);
-galleryList.append(...galleryElements);
-
-galleryList.addEventListener('click', handleGalleryClick);
-
-function handleGalleryClick(event) {
-  event.preventDefault();
-
-  const target = event.target;
-  if (target.nodeName !== 'IMG') return;
-
-  const source = target.dataset.source;
-
-  const instance = basicLightbox.create(`
-    <img src="${source}" width="800" height="600">
-  `);
-
-  instance.show();
-}
+createGalleryItems(galleryItems);
+let lightbox = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+});
 console.log(galleryItems);
